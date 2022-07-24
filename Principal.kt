@@ -1,12 +1,12 @@
 /**
- * Laboratorio 2
+ * Laboratorio 3
  * @author Brian Carrillo
- * @version 1.0
+ * @version 2.0
  *
  * Programación de Plataformas Móviles
  *
  */
-// // No tocar esta clase ---
+// No tocar esta clase ---
 data class ItemData(
     var originalPos: Int,
     var originalValue: Any,
@@ -25,71 +25,25 @@ fun processList(inputList: List<Any?>?): List<ItemData>? {
     var resultado: ArrayList<ItemData>? = ArrayList<ItemData>()
 
     //Caso null
-    if(inputList == null){
-        resultado = null
-        return resultado
-        //Caso empty
-    }else if(inputList.isEmpty()){
-        return resultado
-    }
-
-    //Contador de posiciones
-    var contador = 0
-    for(item in inputList){
-        //Evaluacion de tipo de entrada
-        when(item){
-            is String -> agregarString(resultado,contador,item)
-            is Int -> agregarInt(resultado,contador,item)
-            is Boolean -> agregarBoolean(resultado,contador,item)
-            else -> if(item != null)agregarOtro(resultado,contador,item)
+    if (inputList == null) {
+        return null
+    } else {
+        //Recorrido indexado de items en inputList
+        inputList.forEachIndexed{ idx, value ->
+            if (value != null) {
+                val newItem: ItemData = when (value) {
+                    is String -> ItemData(idx, value, "cadena", "L${value.length}")
+                    is Int -> {
+                        //Determinacion de la multiplicidad de value por 10,5 o 2
+                        val num = listOf(10, 5, 2).firstOrNull { value % it == 0 }
+                        ItemData(idx, value, "entero", if (num != null) "M${num}" else null)
+                    }
+                    is Boolean -> ItemData(idx, value, "booleano", if (value) "Verdadero" else "Falso")
+                    else -> ItemData(idx, value, null, null)
+                }
+                resultado?.add(newItem)
+            }
         }
-        //Incremento del contador
-        contador++
+        return resultado
     }
-
-    return resultado
-}
-
-//Funcion para agregar strings
-fun agregarString(resultado:ArrayList<ItemData>?,pos:Int,value:String):Unit {
-    val newItem = ItemData(
-        originalPos = pos,
-        originalValue = value,
-        type = "cadena",
-        info = "L"+ value.length
-    )
-    resultado?.add(newItem)
-}
-
-//Funcion para agregar enteros
-fun agregarInt(resultado:ArrayList<ItemData>?,pos:Int,value:Int):Unit {
-    val newItem = ItemData(
-        originalPos = pos,
-        originalValue = value,
-        type = "entero",
-        info = if((value%10)==0) "M10" else if((value%5)==0) "M5" else if((value%2)==0) "M2" else null
-    )
-    resultado?.add(newItem)
-}
-
-//Funcion para agregar booleanos
-fun agregarBoolean(resultado:ArrayList<ItemData>?,pos:Int,value:Boolean):Unit {
-    val newItem = ItemData(
-        originalPos = pos,
-        originalValue = value,
-        type = "booleano",
-        info = if(value) "Verdadero" else "Falso"
-    )
-    resultado?.add(newItem)
-}
-
-//Funcion para agregar otros
-fun agregarOtro(resultado:ArrayList<ItemData>?,pos:Int,value:Any):Unit {
-    val newItem = ItemData(
-        originalPos = pos,
-        originalValue = value,
-        type = null,
-        info = null
-    )
-    resultado?.add(newItem)
 }
